@@ -56,7 +56,14 @@ const Index = () => {
 
   return (
     <MainLayout>
-      <div className="animate-fade-in py-4">
+      <div className="py-6 space-y-10 animate-fade-in">
+        <div className="space-y-3">
+          <h1 className="text-3xl font-bold text-gradient">Welcome to StreamHub</h1>
+          <p className="text-muted-foreground max-w-2xl">
+            Your destination for live sports, entertainment, and more. Browse channels, discover new content, and enjoy your favorite shows.
+          </p>
+        </div>
+        
         <FeaturedCarousel items={featuredItems} />
         
         <CategorySection
