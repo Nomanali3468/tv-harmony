@@ -21,12 +21,17 @@ const PlaybackControls: React.FC<PlaybackControlsProps> = ({
   handleProgressChange,
   formatTime
 }) => {
+  const handleCenterPlayClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent event from bubbling up
+    togglePlay();
+  };
+
   return (
     <>
       {/* Center Play Button */}
       <div 
         className="absolute inset-0 flex items-center justify-center cursor-pointer"
-        onClick={togglePlay}
+        onClick={handleCenterPlayClick}
       >
         <div 
           className={cn(
@@ -43,7 +48,10 @@ const PlaybackControls: React.FC<PlaybackControlsProps> = ({
         <Button 
           variant="ghost" 
           size="icon" 
-          onClick={togglePlay}
+          onClick={(e) => {
+            e.stopPropagation(); // Prevent event from bubbling up
+            togglePlay();
+          }}
           className="text-white hover:bg-white/10"
         >
           {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}

@@ -16,7 +16,10 @@ const FullscreenControl: React.FC<FullscreenControlProps> = ({
     <Button 
       variant="ghost" 
       size="icon" 
-      onClick={toggleFullscreen}
+      onClick={(e) => {
+        e.stopPropagation(); // Prevent event from bubbling to parent elements
+        toggleFullscreen();
+      }}
       className="text-white hover:bg-white/10"
     >
       {isFullscreen ? <Minimize className="h-5 w-5" /> : <Maximize className="h-5 w-5" />}

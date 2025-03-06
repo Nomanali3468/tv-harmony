@@ -57,7 +57,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
         className="w-full h-full object-contain"
         onClick={togglePlay}
         onLoadedData={() => {
-          if (isFullScreen) setIsPlaying(true);
+          if (isFullScreen) {
+            togglePlay();
+          }
         }}
       />
       

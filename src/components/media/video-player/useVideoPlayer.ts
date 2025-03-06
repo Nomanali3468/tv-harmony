@@ -78,12 +78,19 @@ export function useVideoPlayer({ isFullScreen = false, onClose }: UseVideoPlayer
       setDuration(video.duration);
     };
 
+    // Listen for fullscreen change events
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+
     video.addEventListener('timeupdate', handleTimeUpdate);
     video.addEventListener('loadedmetadata', handleLoadedMetadata);
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
 
     return () => {
       video.removeEventListener('timeupdate', handleTimeUpdate);
       video.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
     };
   }, []);
 
@@ -100,12 +107,10 @@ export function useVideoPlayer({ isFullScreen = false, onClose }: UseVideoPlayer
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
       playerRef.current?.requestFullscreen().catch(err => {
-        console.error(`Error attempting to enable fullscreen: ${err.message}`);
+        console.error(`Error attempting to enable fullscreen: ${err.message} (${err.name})`);
       });
-      setIsFullscreen(true);
     } else {
       document.exitFullscreen();
-      setIsFullscreen(false);
     }
     showControls();
   };
