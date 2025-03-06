@@ -1,9 +1,15 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Play, Pause, Volume2, VolumeX, Maximize, Minimize, X } from 'lucide-react';
+import { Play, Pause, Volume2, VolumeX, Maximize, Minimize, X, Settings } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { cn } from '@/lib/utils';
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
 
 interface VideoPlayerProps {
   src: string;
@@ -11,6 +17,11 @@ interface VideoPlayerProps {
   poster?: string;
   onClose?: () => void;
   isFullScreen?: boolean;
+}
+
+interface QualityOption {
+  label: string;
+  value: string;
 }
 
 const VideoPlayer: React.FC<VideoPlayerProps> = ({
@@ -27,6 +38,16 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   const [isFullscreen, setIsFullscreen] = useState(isFullScreen);
   const [controlsVisible, setControlsVisible] = useState(true);
   const [volume, setVolume] = useState(100);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [qualityOptions, setQualityOptions] = useState<QualityOption[]>([
+    { label: "Auto", value: "auto" },
+    { label: "1080p", value: "1080" },
+    { label: "720p", value: "720" },
+    { label: "480p", value: "480" },
+    { label: "360p", value: "360" },
+  ]);
+  const [selectedQuality, setSelectedQuality] = useState<string>("auto");
   const controlsTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -68,6 +89,25 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
 
   useEffect(() => {
     showControls();
+
+    const video = videoRef.current;
+    if (!video) return;
+
+    const handleTimeUpdate = () => {
+      setCurrentTime(video.currentTime);
+    };
+
+    const handleLoadedMetadata = () => {
+      setDuration(video.duration);
+    };
+
+    video.addEventListener('timeupdate', handleTimeUpdate);
+    video.addEventListener('loadedmetadata', handleLoadedMetadata);
+
+    return () => {
+      video.removeEventListener('timeupdate', handleTimeUpdate);
+      video.removeEventListener('loadedmetadata', handleLoadedMetadata);
+    };
   }, []);
 
   const togglePlay = () => {
@@ -100,6 +140,23 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
     showControls();
   };
 
+  const handleProgressChange = (value: number[]) => {
+    const newTime = value[0];
+    if (videoRef.current) {
+      videoRef.current.currentTime = newTime;
+      setCurrentTime(newTime);
+    }
+    showControls();
+  };
+
+  const handleQualityChange = (quality: string) => {
+    setSelectedQuality(quality);
+    // In a real implementation, you would switch the video source or use adaptive streaming
+    // For this demo, we'll just show a toast or console log
+    console.log(`Quality changed to ${quality}`);
+    showControls();
+  };
+
   const showControls = () => {
     setControlsVisible(true);
     
@@ -112,6 +169,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
         setControlsVisible(false);
       }
     }, 3000);
+  };
+
+  const formatTime = (timeInSeconds: number) => {
+    const minutes = Math.floor(timeInSeconds / 60);
+    const seconds = Math.floor(timeInSeconds % 60);
+    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
   };
 
   return (
@@ -157,7 +220,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
         </div>
         
         {/* Center Play Button */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div 
+          className="absolute inset-0 flex items-center justify-center cursor-pointer"
+          onClick={togglePlay}
+        >
           <div 
             className={cn(
               "bg-white/10 backdrop-blur-sm text-white rounded-full p-6 transition-all",
@@ -170,6 +236,20 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
         
         {/* Bottom Controls */}
         <div className="p-4 flex flex-col gap-2">
+          {/* Progress bar */}
+          <div className="flex items-center gap-2">
+            <span className="text-xs">{formatTime(currentTime)}</span>
+            <Slider
+              value={[currentTime]}
+              min={0}
+              max={duration || 100}
+              step={1}
+              onValueChange={handleProgressChange}
+              className="flex-1"
+            />
+            <span className="text-xs">{formatTime(duration)}</span>
+          </div>
+          
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Button 
@@ -200,14 +280,43 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
               </div>
             </div>
             
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={toggleFullscreen}
-              className="text-white hover:bg-white/10"
-            >
-              {isFullscreen ? <Minimize className="h-5 w-5" /> : <Maximize className="h-5 w-5" />}
-            </Button>
+            <div className="flex items-center gap-2">
+              {/* Quality selector */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="text-white hover:bg-white/10 gap-1 text-xs"
+                  >
+                    <Settings className="h-4 w-4" />
+                    <span>{selectedQuality === 'auto' ? 'Auto' : `${selectedQuality}p`}</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-24">
+                  {qualityOptions.map((option) => (
+                    <DropdownMenuItem 
+                      key={option.value}
+                      onClick={() => handleQualityChange(option.value)}
+                      className={cn(
+                        selectedQuality === option.value ? "bg-primary/20" : ""
+                      )}
+                    >
+                      {option.label}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+              
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={toggleFullscreen}
+                className="text-white hover:bg-white/10"
+              >
+                {isFullscreen ? <Minimize className="h-5 w-5" /> : <Maximize className="h-5 w-5" />}
+              </Button>
+            </div>
           </div>
         </div>
       </div>
