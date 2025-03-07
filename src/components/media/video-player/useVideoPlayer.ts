@@ -30,6 +30,7 @@ export function useVideoPlayer({ isFullScreen = false, onClose }: UseVideoPlayer
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.code === 'Space') {
+        e.preventDefault(); // Prevent page scrolling on space
         togglePlay();
       } else if (e.code === 'KeyM') {
         toggleMute();

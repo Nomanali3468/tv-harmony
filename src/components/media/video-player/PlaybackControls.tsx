@@ -28,20 +28,17 @@ const PlaybackControls: React.FC<PlaybackControlsProps> = ({
 
   return (
     <>
-      {/* Center Play Button */}
-      <div 
-        className="absolute inset-0 flex items-center justify-center cursor-pointer"
-        onClick={handleCenterPlayClick}
-      >
+      {/* Center Play Button - Only show when paused */}
+      {!isPlaying && (
         <div 
-          className={cn(
-            "bg-white/10 backdrop-blur-sm text-white rounded-full p-6 transition-all",
-            isPlaying ? "scale-0 opacity-0" : "scale-100 opacity-100"
-          )}
+          className="absolute inset-0 flex items-center justify-center cursor-pointer"
+          onClick={handleCenterPlayClick}
         >
-          <Play className="h-12 w-12 fill-current" />
+          <div className="bg-white/10 backdrop-blur-sm text-white rounded-full p-6 transition-all">
+            <Play className="h-12 w-12 fill-current" />
+          </div>
         </div>
-      </div>
+      )}
       
       {/* Bottom Playback Controls */}
       <div className="flex items-center gap-2">
@@ -53,6 +50,7 @@ const PlaybackControls: React.FC<PlaybackControlsProps> = ({
             togglePlay();
           }}
           className="text-white hover:bg-white/10"
+          aria-label={isPlaying ? "Pause" : "Play"}
         >
           {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
         </Button>

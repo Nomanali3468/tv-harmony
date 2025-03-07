@@ -21,6 +21,7 @@ const FullscreenControl: React.FC<FullscreenControlProps> = ({
         toggleFullscreen();
       }}
       className="text-white hover:bg-white/10"
+      aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
     >
       {isFullscreen ? <Minimize className="h-5 w-5" /> : <Maximize className="h-5 w-5" />}
     </Button>
