@@ -118,11 +118,13 @@ const VideoControls: React.FC<VideoControlsProps> = ({
           
           <div className="flex items-center gap-2">
             {/* Quality selector */}
-            <QualitySelector 
-              selectedQuality={selectedQuality}
-              qualityOptions={qualityOptions}
-              handleQualityChange={handleQualityChange}
-            />
+            {qualityOptions.length > 1 && (
+              <QualitySelector 
+                selectedQuality={selectedQuality}
+                qualityOptions={qualityOptions}
+                handleQualityChange={handleQualityChange}
+              />
+            )}
             
             {/* Make sure fullscreen button is visible */}
             <FullscreenControl 

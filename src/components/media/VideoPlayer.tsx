@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import VideoControls from './video-player/VideoControls';
 import { useVideoPlayer } from './video-player/useVideoPlayer';
@@ -10,6 +10,8 @@ interface VideoPlayerProps {
   poster?: string;
   onClose?: () => void;
   isFullScreen?: boolean;
+  headers?: Record<string, string>;
+  qualityOptions?: { label: string; value: string }[];
 }
 
 const VideoPlayer: React.FC<VideoPlayerProps> = ({
@@ -17,7 +19,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   title,
   poster,
   onClose,
-  isFullScreen = false
+  isFullScreen = false,
+  headers,
+  qualityOptions: externalQualityOptions
 }) => {
   const {
     videoRef,
@@ -38,9 +42,20 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
     handleProgressChange,
     handleQualityChange,
     showControls,
-    formatTime
+    formatTime,
+    setQualityOptions
   } = useVideoPlayer({ isFullScreen, onClose });
 
+  // Update quality options when external options change
+  useEffect(() => {
+    if (externalQualityOptions && externalQualityOptions.length > 0) {
+      setQualityOptions(externalQualityOptions);
+    }
+  }, [externalQualityOptions, setQualityOptions]);
+
+  // For HLS with headers, we would normally use a library like hls.js with xhr overrides
+  // This is a simplified implementation that assumes the headers are handled elsewhere
+  
   return (
     <div 
       ref={playerRef}

@@ -1,4 +1,3 @@
-
 // Mock data for development
 
 export interface Channel {
@@ -174,6 +173,17 @@ export const channels: Channel[] = [
     isPremium: false,
     isFavorite: true,
   },
+  {
+    id: "starlife",
+    name: "STAR LIFE",
+    logoUrl: "https://placehold.co/400x225/e67e22/ffffff?text=STAR+LIFE",
+    streamUrl: "placeholder-for-dynamic-url",
+    description: "Entertainment channel featuring a variety of programs",
+    category: "Entertainment",
+    isLive: true,
+    isPremium: false,
+    isFavorite: true,
+  },
 ];
 
 export const sportsChannels = channels.filter(channel => channel.category === "Sports");
@@ -182,3 +192,42 @@ export const entertainmentChannels = channels.filter(channel => channel.category
 export const documentaryChannels = channels.filter(channel => channel.category === "Documentary");
 export const favoriteChannels = channels.filter(channel => channel.isFavorite);
 export const liveChannels = channels.filter(channel => channel.isLive);
+
+// Function to fetch the Star Life stream URL with proper headers
+export const fetchStarLifeStreamData = async () => {
+  try {
+    // In a production app, this would be a backend API call
+    // For demo purposes, we'll simulate the response
+    
+    // This is a simplified version - in a real app, this should be on a server
+    const mockResponse = {
+      streams: [
+        {
+          url: "http://cloudflare-video.gslb.startimestv.com/live_record_g/STAR_LIFE_1494_500_480x360_v1_FMP4/playlist.m3u8",
+          is_def: true,
+          rate_name: "HD"
+        },
+        {
+          url: "http://cloudflare-video.gslb.startimestv.com/live_record_g/STAR_LIFE_1494_250_320x240_v1_FMP4/playlist.m3u8",
+          is_def: false,
+          rate_name: "SD"
+        }
+      ],
+      header_propertys: "CloudFront-Signature=WVY1HIjUV6gPzkMdkAIZ9GnjMdBmGfvryqdrSAxkdi~rQcux6DnyHzTDZC5Y~u2Axde41geK78G41sO6e2Zl2fnm7IEoMCulX7z6zVYjDLZQHANGUgtqjRv8LPbBRlGVt3Ov-H6fAJyCysG9kn9lMwbYTj5KzUXuIDZp0ltDMBaq~J7L~25BshnXnVKwQQrRfhFCikwziXvLc2pZAEPO3j1xREUvf6pvCsJNEj806DQBtxkUJDJxHmpIeFWCWNUWEPIhKIvKJ1WwKbLh95-T3UqcgKpZkzHIE1~k4fWVQyaKJWAsgc4WZ-Dosx5NLe2o6GddadYC9MJYct8DOZ21sQ__;CloudFront-Policy=eyJTdGF0ZW1lbnQiOiBbeyJSZXNvdXJjZSI6Imh0dHA6Ly8qLnN0YXJ0aW1lc3R2LmNvbS9saXZlX3JlY29yKiIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc0MTMxNzk1OX19fV19;CloudFront-Key-Pair-Id=APKAIPKYIDIQPHMZ2WKA",
+      on_trial_duration: 180
+    };
+
+    return {
+      streamUrl: mockResponse.streams.find(stream => stream.is_def)?.url || mockResponse.streams[0].url,
+      headerProperties: mockResponse.header_propertys,
+      expiresIn: mockResponse.on_trial_duration,
+      qualityOptions: mockResponse.streams.map(stream => ({
+        label: stream.rate_name,
+        value: stream.url
+      }))
+    };
+  } catch (error) {
+    console.error("Error fetching stream data:", error);
+    throw error;
+  }
+};

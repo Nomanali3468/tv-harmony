@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, MessageSquare, X } from "lucide-react";
@@ -10,6 +9,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { useStreamSource } from "@/hooks/use-stream-source";
 import { Separator } from "@/components/ui/separator";
 
 interface ChatMessage {
@@ -29,6 +29,14 @@ const ChannelPlayer = () => {
   const [chatMessage, setChatMessage] = useState("");
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const { toast } = useToast();
+  
+  const { 
+    url: streamUrl, 
+    headers, 
+    qualityOptions,
+    isLoading, 
+    error 
+  } = useStreamSource(channelId || '');
 
   useEffect(() => {
     if (!channel) {
@@ -42,7 +50,16 @@ const ChannelPlayer = () => {
   }, [channel, navigate]);
 
   useEffect(() => {
-    // Generate some fake chat messages
+    if (error) {
+      toast({
+        title: "Streaming Error",
+        description: "There was an error loading the stream. Please try again.",
+        variant: "destructive",
+      });
+    }
+  }, [error, toast]);
+
+  useEffect(() => {
     const initialMessages: ChatMessage[] = [
       {
         id: "1",
@@ -69,7 +86,6 @@ const ChannelPlayer = () => {
     
     setChatMessages(initialMessages);
     
-    // Add a new fake message every 20 seconds
     const interval = setInterval(() => {
       const randomMessages = [
         "This is such a great match!",
@@ -161,13 +177,21 @@ const ChannelPlayer = () => {
         
         <div className={`flex ${isFullScreen ? "h-full" : "flex-col md:flex-row gap-4"}`}>
           <div className={`${isFullScreen ? "w-full h-full" : "w-full md:w-3/4"}`}>
-            <VideoPlayer
-              src={channel.streamUrl}
-              title={channel.name}
-              poster={channel.logoUrl}
-              isFullScreen={isFullScreen}
-              onClose={isFullScreen ? handleToggleFullScreen : undefined}
-            />
+            {isLoading ? (
+              <div className="aspect-video bg-black/20 animate-pulse flex items-center justify-center rounded-xl">
+                <p className="text-lg text-white/70">Loading stream...</p>
+              </div>
+            ) : (
+              <VideoPlayer
+                src={streamUrl || channel.streamUrl}
+                title={channel.name}
+                poster={channel.logoUrl}
+                isFullScreen={isFullScreen}
+                onClose={isFullScreen ? handleToggleFullScreen : undefined}
+                headers={headers}
+                qualityOptions={qualityOptions}
+              />
+            )}
             
             {!isFullScreen && (
               <div className="mt-4">

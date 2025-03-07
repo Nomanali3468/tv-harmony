@@ -1,5 +1,5 @@
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { QualityOption } from './QualitySelector';
 
 interface UseVideoPlayerProps {
@@ -134,13 +134,12 @@ export function useVideoPlayer({ isFullScreen = false, onClose }: UseVideoPlayer
     showControls();
   };
 
-  const handleQualityChange = (quality: string) => {
+  const handleQualityChange = useCallback((quality: string) => {
     setSelectedQuality(quality);
-    // In a real implementation, you would switch the video source or use adaptive streaming
-    // For this demo, we'll just show a toast or console log
+    // In a real implementation with dynamic URLs, you would switch the video source here
     console.log(`Quality changed to ${quality}`);
     showControls();
-  };
+  }, []);
 
   const showControls = () => {
     setControlsVisible(true);
@@ -181,6 +180,7 @@ export function useVideoPlayer({ isFullScreen = false, onClose }: UseVideoPlayer
     handleProgressChange,
     handleQualityChange,
     showControls,
-    formatTime
+    formatTime,
+    setQualityOptions
   };
 }
