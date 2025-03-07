@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { X, Play, Pause } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -98,18 +99,14 @@ const VideoControls: React.FC<VideoControlsProps> = ({
         
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={(e) => {
-                e.stopPropagation();
-                togglePlay();
-              }}
-              className="text-white hover:bg-white/10"
-              aria-label={isPlaying ? "Pause" : "Play"}
-            >
-              {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
-            </Button>
+            <PlaybackControls
+              isPlaying={isPlaying}
+              togglePlay={togglePlay}
+              duration={duration}
+              currentTime={currentTime}
+              handleProgressChange={handleProgressChange}
+              formatTime={formatTime}
+            />
             
             <VolumeControls 
               isMuted={isMuted}
