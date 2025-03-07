@@ -124,6 +124,7 @@ const VideoControls: React.FC<VideoControlsProps> = ({
               handleQualityChange={handleQualityChange}
             />
             
+            {/* Make sure fullscreen button is visible */}
             <FullscreenControl 
               isFullscreen={isFullscreen} 
               toggleFullscreen={toggleFullscreen} 

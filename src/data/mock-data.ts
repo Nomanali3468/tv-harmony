@@ -163,6 +163,17 @@ export const channels: Channel[] = [
     isPremium: false,
     isFavorite: true,
   },
+  {
+    id: "custom1",
+    name: "Custom Channel",
+    logoUrl: "https://placehold.co/400x225/9b59b6/ffffff?text=Custom+Channel",
+    streamUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+    description: "Your custom channel with unique content",
+    category: "Entertainment",
+    isLive: true,
+    isPremium: false,
+    isFavorite: true,
+  },
 ];
 
 export const sportsChannels = channels.filter(channel => channel.category === "Sports");
