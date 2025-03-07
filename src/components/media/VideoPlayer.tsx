@@ -49,13 +49,13 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
         isFullscreen ? "fixed inset-0 z-50 bg-black" : "rounded-xl w-full aspect-video",
       )}
       onMouseMove={showControls}
+      onClick={togglePlay}
     >
       <video
         ref={videoRef}
         src={src}
         poster={poster}
         className="w-full h-full object-contain"
-        onClick={togglePlay}
         onLoadedData={() => {
           if (isFullScreen) {
             togglePlay();

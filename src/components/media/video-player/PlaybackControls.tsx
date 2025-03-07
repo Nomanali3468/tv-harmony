@@ -21,41 +21,21 @@ const PlaybackControls: React.FC<PlaybackControlsProps> = ({
   handleProgressChange,
   formatTime
 }) => {
-  const handleCenterPlayClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent event from bubbling up
-    togglePlay();
-  };
-
   return (
-    <>
-      {/* Center Play Button - Only show when paused */}
-      {!isPlaying && (
-        <div 
-          className="absolute inset-0 flex items-center justify-center cursor-pointer"
-          onClick={handleCenterPlayClick}
-        >
-          <div className="bg-white/10 backdrop-blur-sm text-white rounded-full p-6 transition-all">
-            <Play className="h-12 w-12 fill-current" />
-          </div>
-        </div>
-      )}
-      
-      {/* Bottom Playback Controls */}
-      <div className="flex items-center gap-2">
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          onClick={(e) => {
-            e.stopPropagation(); // Prevent event from bubbling up
-            togglePlay();
-          }}
-          className="text-white hover:bg-white/10"
-          aria-label={isPlaying ? "Pause" : "Play"}
-        >
-          {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
-        </Button>
-      </div>
-    </>
+    <div className="flex items-center gap-2">
+      <Button 
+        variant="ghost" 
+        size="icon" 
+        onClick={(e) => {
+          e.stopPropagation(); // Prevent event from bubbling up
+          togglePlay();
+        }}
+        className="text-white hover:bg-white/10"
+        aria-label={isPlaying ? "Pause" : "Play"}
+      >
+        {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
+      </Button>
+    </div>
   );
 };
 

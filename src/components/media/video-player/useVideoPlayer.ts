@@ -106,12 +106,14 @@ export function useVideoPlayer({ isFullScreen = false, onClose }: UseVideoPlayer
   };
 
   const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      playerRef.current?.requestFullscreen().catch(err => {
-        console.error(`Error attempting to enable fullscreen: ${err.message} (${err.name})`);
-      });
-    } else {
-      document.exitFullscreen();
+    try {
+      if (!document.fullscreenElement && playerRef.current) {
+        playerRef.current.requestFullscreen();
+      } else if (document.fullscreenElement) {
+        document.exitFullscreen();
+      }
+    } catch (err) {
+      console.error('Error attempting to toggle fullscreen:', err);
     }
     showControls();
   };

@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { X } from 'lucide-react';
+import { X, Play, Pause } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { cn } from '@/lib/utils';
 import PlaybackControls from './PlaybackControls';
@@ -72,15 +71,20 @@ const VideoControls: React.FC<VideoControlsProps> = ({
         )}
       </div>
       
-      {/* Center Play Button */}
-      <PlaybackControls 
-        isPlaying={isPlaying}
-        togglePlay={togglePlay}
-        duration={duration}
-        currentTime={currentTime}
-        handleProgressChange={handleProgressChange}
-        formatTime={formatTime}
-      />
+      {/* Center Play Button - Only show when paused */}
+      {!isPlaying && (
+        <div 
+          className="absolute inset-0 flex items-center justify-center cursor-pointer"
+          onClick={(e) => {
+            e.stopPropagation();
+            togglePlay();
+          }}
+        >
+          <div className="bg-white/10 backdrop-blur-sm text-white rounded-full p-6 transition-all">
+            <Play className="h-12 w-12 fill-current" />
+          </div>
+        </div>
+      )}
       
       {/* Bottom Controls */}
       <div className="p-4 flex flex-col gap-2">
@@ -94,14 +98,18 @@ const VideoControls: React.FC<VideoControlsProps> = ({
         
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <PlaybackControls 
-              isPlaying={isPlaying}
-              togglePlay={togglePlay}
-              duration={duration}
-              currentTime={currentTime}
-              handleProgressChange={handleProgressChange}
-              formatTime={formatTime}
-            />
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={(e) => {
+                e.stopPropagation();
+                togglePlay();
+              }}
+              className="text-white hover:bg-white/10"
+              aria-label={isPlaying ? "Pause" : "Play"}
+            >
+              {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
+            </Button>
             
             <VolumeControls 
               isMuted={isMuted}
